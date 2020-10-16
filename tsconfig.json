@@ -1,23 +1,39 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
-    "module": "commonjs",
-    "lib": ["es2018"],
-    "declaration": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "noImplicitThis": true,
     "alwaysStrict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": false,
+    "declaration": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
     "inlineSourceMap": true,
     "inlineSources": true,
-    "experimentalDecorators": true,
+    "lib": [
+      "es2018",
+      "es2019",
+      "es2020",
+      "esnext"
+    ],
+    "module": "commonjs",
+    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "strict": true,
+    "strictNullChecks": true,
     "strictPropertyInitialization": false,
-    "typeRoots": ["./node_modules/@types"]
+    "target": "es2018",
+    "typeRoots": ["./node_modules/@types"],
+    "outDir": "dist"
   },
-  "exclude": ["cdk.out"]
+  "include": [
+    "bin/**/*.ts",
+    "src/**/*.ts",
+    "lib/**/*.ts",
+    "secrets/*"
+  ],
+  "exclude": [
+    "cdk.out",
+    "src/fargate/**"
+  ]
 }
