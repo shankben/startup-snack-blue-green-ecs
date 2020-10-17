@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import "source-map-support/register";
-
 import * as cdk from "@aws-cdk/core";
-import { EcsCicdStack } from "../lib/ecs-cicd-stack";
+import { ServiceStack } from "../lib/stacks/service";
 
 const app = new cdk.App();
 
-new EcsCicdStack(app, "EcsCicdStack");
+const serviceStack = new ServiceStack(app, "EcsCicdServiceStack", {
+  imageTag: app.node.tryGetContext("image-tag") ?? "latest"
+});
