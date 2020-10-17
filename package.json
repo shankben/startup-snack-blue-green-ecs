@@ -1,9 +1,7 @@
 {
-  "name": "ecs-cicd",
+  "name": "cdk-blue-green-ecs",
   "version": "0.1.0",
-  "bin": {
-    "ecs-cicd": "bin/ecs-cicd.js"
-  },
+  "license": "Apache-2.0",
   "scripts": {
     "build": "mkdir -p dist && rsync -azr --delete secrets/ dist/secrets/ && rsync -azr --delete src/ dist/src/ && tsc",
     "watch": "tsc -w",
