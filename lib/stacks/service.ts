@@ -113,7 +113,8 @@ export class ServiceStack extends Stack {
           },
           ecsAttributes: {
             taskDefinitions: [
-              this.getLogicalId(taskBundle.taskDefinition.node                    .defaultChild as CfnTaskDefinition),
+              this.getLogicalId(taskBundle.taskDefinition.node
+                .defaultChild as CfnTaskDefinition),
               "TaskDefGreen"
             ],
             taskSets: [
