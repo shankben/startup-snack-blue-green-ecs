@@ -1,3 +1,5 @@
+*.drawio
+
 cdk.context.json
 secrets/
 src/fargate/firebase-listener-proxy/scripts/
