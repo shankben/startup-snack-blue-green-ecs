@@ -1,11 +1,6 @@
 import path from "path";
 
 import {
-  Construct,
-  RemovalPolicy
-} from "@aws-cdk/core";
-
-import {
   AwsLogDriver,
   CfnCluster,
   CfnPrimaryTaskSet,
@@ -18,22 +13,11 @@ import {
   LaunchType
 } from "@aws-cdk/aws-ecs";
 
+import { Construct, RemovalPolicy } from "@aws-cdk/core";
+import { SecurityGroup, SubnetType, Vpc } from "@aws-cdk/aws-ec2";
+import { ApplicationTargetGroup } from "@aws-cdk/aws-elasticloadbalancingv2";
+import { LogGroup, RetentionDays } from "@aws-cdk/aws-logs";
 import { DockerImageAsset } from "@aws-cdk/aws-ecr-assets";
-
-import {
-  SecurityGroup,
-  SubnetType,
-  Vpc
-} from "@aws-cdk/aws-ec2";
-
-import {
-  ApplicationTargetGroup
-} from "@aws-cdk/aws-elasticloadbalancingv2";
-
-import {
-  LogGroup,
-  RetentionDays
-} from "@aws-cdk/aws-logs";
 
 
 interface FargateTaskBundleProps {

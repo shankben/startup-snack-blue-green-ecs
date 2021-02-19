@@ -1,7 +1,5 @@
 import {
-  CfnCodeDeployBlueGreenHook,
   CfnOutput,
-  CfnTrafficRoutingType,
   Construct,
   Duration,
   Stack,
@@ -11,7 +9,6 @@ import {
 import {
   CfnCluster,
   CfnService,
-  CfnTaskDefinition,
   Cluster,
   DeploymentControllerType
 } from "@aws-cdk/aws-ecs";
@@ -20,8 +17,6 @@ import {
   ApplicationListener,
   ApplicationLoadBalancer,
   ApplicationTargetGroup,
-  CfnListener,
-  CfnTargetGroup,
   ListenerAction,
   TargetType
 } from "@aws-cdk/aws-elasticloadbalancingv2";
@@ -33,16 +28,9 @@ import {
   Vpc
 } from "@aws-cdk/aws-ec2";
 
+import { LoadBalancerResources } from "../common/load-balancer-resources";
 import FargateTaskBundle from "../constructs/fargate-task-bundle";
-
-
-interface LoadBalancerResources {
-  loadBalancer: ApplicationLoadBalancer;
-  listener: ApplicationListener;
-  loadBalancerSecurityGroup: SecurityGroup;
-  blueTargetGroup: ApplicationTargetGroup;
-  greenTargetGroup: ApplicationTargetGroup;
-}
+import CloudFormationBlueGreenHook from "../constructs/cfn-blue-green-hook";
 
 interface ServiceStackProps extends StackProps {
   imageTag: string;
@@ -95,64 +83,11 @@ export class ServiceStack extends Stack {
     };
   }
 
-  private makeCodeDeployBlueGreenHook(
-    service: CfnService,
-    taskBundle: FargateTaskBundle,
-    albResources: LoadBalancerResources
-  ) {
-    this.addTransform("AWS::CodeDeployBlueGreen");
-    new CfnCodeDeployBlueGreenHook(this, "BlueGreenHook", {
-      serviceRole: "AWSCodeDeployRoleForECS",
-      trafficRoutingConfig: {
-        type: CfnTrafficRoutingType.ALL_AT_ONCE
-      },
-      applications: [
-        {
-          target: {
-            type: "AWS::ECS::Service",
-            logicalId: this.getLogicalId(service)
-          },
-          ecsAttributes: {
-            taskDefinitions: [
-              this.getLogicalId(taskBundle.taskDefinition.node
-                .defaultChild as CfnTaskDefinition),
-              "TaskDefGreen"
-            ],
-            taskSets: [
-              this.getLogicalId(taskBundle.taskSet),
-              "TaskSetGreen"
-            ],
-            trafficRouting: {
-              prodTrafficRoute: {
-                type: "AWS::ElasticLoadBalancingV2::Listener",
-                logicalId: this
-                  .getLogicalId(albResources.listener.node
-                    .defaultChild as CfnListener)
-              },
-              testTrafficRoute: {
-                type: "AWS::ElasticLoadBalancingV2::Listener",
-                logicalId: this
-                  .getLogicalId(albResources.listener.node
-                    .defaultChild as CfnListener)
-              },
-              targetGroups: [
-                this.getLogicalId(albResources.blueTargetGroup.node
-                  .defaultChild as CfnTargetGroup),
-                this.getLogicalId(albResources.greenTargetGroup.node
-                  .defaultChild as CfnTargetGroup)
-              ]
-            }
-          }
-        }
-      ]
-    });
-  }
-
   private makeFargateService(cluster: Cluster): CfnService {
     return new CfnService(this, "FargateService", {
       serviceName: "StartupSnack-BlueGreenEcsService",
       cluster: (cluster.node.defaultChild as CfnCluster).ref,
-      desiredCount: 4,
+      desiredCount: 2,
       schedulingStrategy: "REPLICA",
       deploymentConfiguration: {
         maximumPercent: 150,
@@ -176,13 +111,19 @@ export class ServiceStack extends Stack {
     const albResources = this.makeLoadBalancerResources(vpc);
     const taskBundle = new FargateTaskBundle(this, "FargateTaskBundle", {
       cluster,
+      service,
+      vpc,
       imageTag: props.imageTag,
       loadBalancerSecurityGroup: albResources.loadBalancerSecurityGroup,
-      service,
-      targetGroup: albResources.blueTargetGroup,
-      vpc
+      targetGroup: albResources.blueTargetGroup
     });
-    this.makeCodeDeployBlueGreenHook(service, taskBundle, albResources);
+
+    new CloudFormationBlueGreenHook(this, "CloudFormationBlueGreenHook", {
+      service,
+      taskBundle,
+      albResources
+    });
+
     new CfnOutput(this, "LoadBalancerDnsName", {
       value: albResources.loadBalancer.loadBalancerDnsName
     });
