@@ -58,7 +58,7 @@ export class ServiceStack extends Stack {
 
     const loadBalancer = new ApplicationLoadBalancer(this, "Alb", {
       vpc,
-      loadBalancerName: "StartupSnack-BlueGreenEcsLoadBalancer",
+      loadBalancerName: "StartupSnack-BlueGreenEcs",
       internetFacing: true,
       securityGroup
     });
