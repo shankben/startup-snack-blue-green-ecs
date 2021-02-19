@@ -5,6 +5,6 @@ import { ServiceStack } from "../lib/stacks/service";
 
 const app = new cdk.App();
 
-const serviceStack = new ServiceStack(app, "EcsCicdServiceStack", {
+const serviceStack = new ServiceStack(app, "StartupSnackBlueGreenEcsStack", {
   imageTag: app.node.tryGetContext("image-tag") ?? "latest"
 });

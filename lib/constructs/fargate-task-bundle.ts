@@ -53,7 +53,8 @@ export default class FargateTaskBundle extends Construct {
   public readonly taskDefinition: FargateTaskDefinition;
   public readonly taskSet: CfnTaskSet;
 
-  private readonly assetPath = path.join(__dirname, "..", "..", "src", "ecs");
+  private readonly assetPath = path.join(__dirname, "..", "..", "assets",
+    "ecs");
 
   constructor(scope: Construct, id: string, props: FargateTaskBundleProps) {
     super(scope, id);

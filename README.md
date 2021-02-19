@@ -1,4 +1,4 @@
-# Blue-Green Deployments for Amazon Elastic Container Service using AWS Cloud Development Kit
+# Startup Snack | Blue-Green Deployments for Amazon Elastic Container Service
 
 This project recasts into an AWS Cloud Development Kit (CDK) application the [prescriptive guidance](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/blue-green.html) for using CloudFormation's inbuilt blue-green deployment strategy for Amazon Elastic Container Service (ECS).
 

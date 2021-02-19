@@ -27,13 +27,13 @@
     "outDir": "dist"
   },
   "include": [
+    "assets/**/*.ts",
     "bin/**/*.ts",
-    "src/**/*.ts",
     "lib/**/*.ts",
     "secrets/*"
   ],
   "exclude": [
-    "cdk.out",
-    "src/fargate/**"
+    "assets/fargate/**",
+    "cdk.out"
   ]
 }
