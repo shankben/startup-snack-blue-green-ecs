@@ -58,6 +58,7 @@ export class ServiceStack extends Stack {
 
     const loadBalancer = new ApplicationLoadBalancer(this, "Alb", {
       vpc,
+      loadBalancerName: "StartupSnack-BlueGreenEcsLoadBalancer",
       internetFacing: true,
       securityGroup
     });
@@ -149,6 +150,7 @@ export class ServiceStack extends Stack {
 
   private makeFargateService(cluster: Cluster): CfnService {
     return new CfnService(this, "FargateService", {
+      serviceName: "StartupSnack-BlueGreenEcsService",
       cluster: (cluster.node.defaultChild as CfnCluster).ref,
       desiredCount: 4,
       schedulingStrategy: "REPLICA",
@@ -166,7 +168,10 @@ export class ServiceStack extends Stack {
     super(scope, id, props);
 
     const vpc = new Vpc(this, "Vpc", { maxAzs: 2 });
-    const cluster = new Cluster(this, "EcsCluster", { vpc });
+    const cluster = new Cluster(this, "StartupSnack-BlueGreenEcsCluster", {
+      vpc,
+      clusterName: "StartupSnack-BlueGreenEcsCluster"
+    });
     const service = this.makeFargateService(cluster);
     const albResources = this.makeLoadBalancerResources(vpc);
     const taskBundle = new FargateTaskBundle(this, "FargateTaskBundle", {
